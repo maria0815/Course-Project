@@ -1,6 +1,7 @@
 package service
 
 import entity.Album
+import java.util.UUID
 
 /**
  * Сервис для работы с альбомами фотографий
@@ -10,23 +11,23 @@ interface IAlbumService {
      * Создает новый альбом с наименованием [name],
      * возвращает идентификатор созданного альбома
      */
-    fun createAlbum(name: String): Int
+    fun createAlbum(name: String): UUID
 
     /**
      * Изменяет имя альбома с идентификатором [id] на имя [name]
      */
-    fun renameAlbum(id: Int, name: String)
+    fun renameAlbum(id: UUID, name: String)
 
     /**
      * Удаляет альбом с идентификатором [id]
      */
-    fun deleteAlbum(id: Int)
+    fun deleteAlbum(id: UUID)
 
     /**
      * Добавляет фотографию с идентификатором [photoId]
      * в альбом с идентификатором [id]
      */
-    fun addPhoto(photoId: Int, id: Int)
+    fun addPhoto(photoId: UUID, id: UUID)
 
     /**
      * Возвращает список всех альбомов
@@ -36,5 +37,5 @@ interface IAlbumService {
     /**
      * Возвращает список всех фотографий в альбоме с идентификатором [id]
      */
-    fun getPhotosByAlbumId(id: Int)
+    fun getPhotosByAlbumId(id: UUID)
 }
