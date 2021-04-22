@@ -1,17 +1,17 @@
-package service
+package photo.dao.photo
 
-import entity.Photo
+import photo.entity.Photo
+import java.time.LocalDate
 import java.util.UUID
-import java.util.Date
 
 /**
  * Сервис для работы с фотографиями
  */
-interface IPhotoService {
+interface PhotoDao {
     /**
      * Возвращает фотографию по идентификатору [photoId]
      */
-    fun getPhotoById(photoId: UUID): Photo
+    fun getPhotoById(photoId: UUID): Photo?
 
     /**
      * Загружает фотографию [photo], возвращает идентификатор сохраненной
@@ -23,7 +23,7 @@ interface IPhotoService {
      * Возвращает список идентификаторов фотографий за дату [date].
      * Фотографии отсортированны по времени съемки.
      */
-    fun getPhotosByDate(date: Date): List<UUID>
+    fun getPhotosByDate(date: LocalDate): List<UUID>
 
     /**
      * Возвращает список идентификаторов всех фотографий.
@@ -35,5 +35,5 @@ interface IPhotoService {
      * Возвращает список фотографий, снятых в радиусе [radius] метров
      * от точки с координатами ([latitude], [longitude])
      */
-    fun getPhotosByCoordinates(latitude: Double, longitude: Double, radius: Int): List<UUID>
+    fun getPhotosByCoordinates(latitude: Double, longitude: Double, radius: Int): List<UUID>?
 }

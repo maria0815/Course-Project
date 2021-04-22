@@ -4,13 +4,13 @@
   <OriginalElement>1f36eb14-3473-4cab-a22e-27a08578bdc5.DATABASE: Course project</OriginalElement>
   <nodes>
     <node x="51.0" y="179.0">1f36eb14-3473-4cab-a22e-27a08578bdc5.TABLE: Course project.public.USER</node>
-    <node x="185.0" y="336.0">1f36eb14-3473-4cab-a22e-27a08578bdc5.TABLE: Course project.public.photo</node>
+    <node x="0.0" y="380.0">1f36eb14-3473-4cab-a22e-27a08578bdc5.TABLE: Course project.public.album</node>
     <node x="42.5" y="658.0">1f36eb14-3473-4cab-a22e-27a08578bdc5.TABLE: Course project.public.album_wih_photos</node>
     <node x="189.5" y="0.0">1f36eb14-3473-4cab-a22e-27a08578bdc5.TABLE: Course project.public.brand</node>
     <node x="351.0" y="179.0">1f36eb14-3473-4cab-a22e-27a08578bdc5.TABLE: Course project.public.device</node>
     <node x="205.0" y="168.0">1f36eb14-3473-4cab-a22e-27a08578bdc5.TABLE: Course project.public.model</node>
     <node x="248.5" y="658.0">1f36eb14-3473-4cab-a22e-27a08578bdc5.TABLE: Course project.public.geo_data</node>
-    <node x="0.0" y="380.0">1f36eb14-3473-4cab-a22e-27a08578bdc5.TABLE: Course project.public.album</node>
+    <node x="185.0" y="336.0">1f36eb14-3473-4cab-a22e-27a08578bdc5.TABLE: Course project.public.photo</node>
   </nodes>
   <notes />
   <edges>
@@ -42,19 +42,21 @@
       <point x="145.5" y="311.0" />
       <point x="31.5" y="48.0" />
     </edge>
-    <edge source="1f36eb14-3473-4cab-a22e-27a08578bdc5.TABLE: Course project.public.photo" target="1f36eb14-3473-4cab-a22e-27a08578bdc5.TABLE: Course project.public.model">
-      <point x="0.0" y="-136.0" />
-      <point x="0.0" y="59.0" />
-    </edge>
     <edge source="1f36eb14-3473-4cab-a22e-27a08578bdc5.TABLE: Course project.public.photo" target="1f36eb14-3473-4cab-a22e-27a08578bdc5.TABLE: Course project.public.device">
       <point x="55.333333333333314" y="-136.0" />
       <point x="323.3333333333333" y="311.0" />
       <point x="414.0" y="311.0" />
       <point x="0.0" y="48.0" />
     </edge>
+    <edge source="1f36eb14-3473-4cab-a22e-27a08578bdc5.TABLE: Course project.public.photo" target="1f36eb14-3473-4cab-a22e-27a08578bdc5.TABLE: Course project.public.model">
+      <point x="0.0" y="-136.0" />
+      <point x="0.0" y="59.0" />
+    </edge>
   </edges>
-  <settings layout="Hierarchic Group" zoom="0.7211055276381909" x="238.5" y="388.0" />
-  <SelectedNodes />
+  <settings layout="Hierarchic Group" zoom="0.5062814070351759" x="238.5" y="388.0" />
+  <SelectedNodes>
+    <node>1f36eb14-3473-4cab-a22e-27a08578bdc5.TABLE: Course project.public.album</node>
+  </SelectedNodes>
   <Categories>
     <Category>Key columns</Category>
     <Category>Columns</Category>

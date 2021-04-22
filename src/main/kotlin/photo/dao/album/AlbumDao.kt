@@ -1,14 +1,16 @@
-package service
+package photo.dao.album
 
-import entity.Album
+import photo.entity.Album
+import org.springframework.stereotype.Repository
 import java.util.UUID
 
 /**
  * Сервис для работы с альбомами фотографий
  */
-interface IAlbumService {
+@Repository
+interface AlbumDao {
     /**
-     * Создает новый альбом с наименованием [name],
+     * Создает новый альбом с наименованием [name], +
      * возвращает идентификатор созданного альбома
      */
     fun createAlbum(name: String): UUID
@@ -30,12 +32,12 @@ interface IAlbumService {
     fun addPhoto(photoId: UUID, id: UUID)
 
     /**
-     * Возвращает список всех альбомов
+     * Возвращает список всех альбомов +
      */
-    fun getAlbums(): List<Album>
+    fun getAllAlbums(): MutableList<Album>
 
     /**
      * Возвращает список всех фотографий в альбоме с идентификатором [id]
      */
-    fun getPhotosByAlbumId(id: UUID)
+    fun getPhotosByAlbumId(id: UUID): List<UUID>
 }
