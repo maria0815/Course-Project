@@ -1,13 +1,13 @@
-package photo.dao.photo
+package photo.photo
 
-import photo.entity.Photo
+import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDate
 import java.util.UUID
 
 /**
  * Сервис для работы с фотографиями
  */
-interface PhotoDao {
+interface PhotoService {
     /**
      * Возвращает фотографию по идентификатору [photoId]
      */
@@ -17,7 +17,7 @@ interface PhotoDao {
      * Загружает фотографию [photo], возвращает идентификатор сохраненной
      * фотографии
      */
-    fun uploadPhoto(photo: Photo): UUID
+    fun uploadPhoto(file: MultipartFile, userId: UUID): UUID?
 
     /**
      * Возвращает список идентификаторов фотографий за дату [date].
@@ -36,4 +36,5 @@ interface PhotoDao {
      * от точки с координатами ([latitude], [longitude])
      */
     fun getPhotosByCoordinates(latitude: Double, longitude: Double, radius: Int): List<UUID>?
+
 }

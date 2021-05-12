@@ -1,7 +1,5 @@
-package photo.api
+package photo.user
 
-import photo.entity.User
-import photo.dao.user.UserDao
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiParam
 import io.swagger.annotations.ApiResponse
@@ -11,13 +9,12 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import photo.request.CreateUserRequest
 import java.util.*
 
 
 @RestController
 @RequestMapping("/users")
-class UserController(private val userDao: UserDao) {
+class UserController(private val userService: UserService) {
 
     private val logger = LoggerFactory.getLogger(UserController::class.java)
 
@@ -31,9 +28,9 @@ class UserController(private val userDao: UserDao) {
     @PostMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     fun createUser(
         @ApiParam("Создаваемый пользователь")
-        @RequestBody user: CreateUserRequest,
-    ): ResponseEntity<UUID> {
-        val uuid = userDao.createUser(user.name)
+        @RequestBody request: CreateUserRequest,
+    ): ResponseEntity<UUID?> {
+        val uuid = userService.createUser(request.name)
         return ResponseEntity(uuid, HttpStatus.CREATED)
     }
 
@@ -44,42 +41,53 @@ class UserController(private val userDao: UserDao) {
             ApiResponse(code = 404, message = "Пользователь с таким идентификатором не найден")
         ]
     )
-    @ResponseStatus(value = HttpStatus.CREATED)
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @PutMapping("/{id}")
-    fun renameAlbums(
+    fun renameUser(
         @ApiParam("Идентификатор пользователя")
         @PathVariable id: UUID,
         @ApiParam("Имя пользователя")
         @RequestBody name: String,
-    ) {
-        userDao.renameUser(id, name)
+    ): ResponseEntity<Unit> {
+        return if (userService.getUserById(id) != null) {
+            userService.renameUser(id, name)
+            ResponseEntity(HttpStatus.NO_CONTENT)
+        } else {
+            ResponseEntity(HttpStatus.NOT_FOUND)
+        }
     }
 
     @ApiOperation("Удаляет пользователя")
     @ApiResponses(
         value = [
             ApiResponse(code = 204, message = "Пользователь удален"),
-            ApiResponse(code = 404, message = "Пользователь с таким идентификатором не найден"),
+            ApiResponse(code = 404, message = "Пользователь с таким идентификатором не найден")
         ]
     )
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    fun deleteAlbum(
+    fun deleteUser(
         @ApiParam("Идентификатор пользователя")
         @PathVariable id: UUID,
-    ) {
-        userDao.deleteUser(id)
+    ): ResponseEntity<Unit> {
+        userService.deleteUser(id)
+        return if (userService.getUserById(id) != null) {
+            userService.deleteUser(id)
+            ResponseEntity(HttpStatus.NO_CONTENT)
+        } else {
+            ResponseEntity(HttpStatus.NOT_FOUND)
+        }
     }
 
     @ApiOperation("Возвращает список всех пользователей")
     @ApiResponses(
         value = [
-            ApiResponse(code = 200, message = "Список с пользователями доступен"),
+            ApiResponse(code = 200, message = "Список с пользователями доступен")
         ]
     )
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @GetMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun getAlbums(): ResponseEntity<List<User>> {
-        val listOfUsers = userDao.getAllUsers()
+    fun getUsers(): ResponseEntity<Iterable<User>> {
+        val listOfUsers = userService.getAllUsers()
         return ResponseEntity.ok(listOfUsers)
     }
 
@@ -87,7 +95,7 @@ class UserController(private val userDao: UserDao) {
     @ApiResponses(
         value = [
             ApiResponse(code = 200, message = "Пользователь найден", response = User::class),
-            ApiResponse(code = 404, message = "Пользователь с таким идентификатором не найден"),
+            ApiResponse(code = 404, message = "Пользователь с таким идентификатором не найден")
         ]
     )
     @GetMapping(value = ["{id}"], produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -95,7 +103,11 @@ class UserController(private val userDao: UserDao) {
         @ApiParam("Идентификатор пользователя")
         @PathVariable id: UUID,
     ): ResponseEntity<User?> {
-        val user = userDao.getUserById(id)
-        return ResponseEntity(user, HttpStatus.NOT_FOUND)
+        val user = userService.getUserById(id)
+        return if (user != null) {
+            ResponseEntity(user, HttpStatus.OK)
+        } else {
+            ResponseEntity(HttpStatus.NOT_FOUND)
+        }
     }
 }

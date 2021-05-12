@@ -1,9 +1,10 @@
 plugins {
-    id 'org.springframework.boot' version '2.4.4'
+    id 'org.springframework.boot' version '2.4.5'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
     id 'org.jetbrains.kotlin.jvm' version '1.4.21'
     id 'org.jetbrains.kotlin.plugin.spring' version '1.4.21'
+    id 'org.jetbrains.kotlin.plugin.jpa' version "1.4.32"
 }
 
 group 'org.example'
@@ -14,11 +15,24 @@ repositories {
 }
 
 dependencies {
-    implementation "org.springframework.boot:spring-boot-starter-web"
+
     implementation "io.springfox:springfox-boot-starter:3.0.0"
     implementation "com.fasterxml.jackson.module:jackson-module-kotlin"
     implementation "org.jetbrains.kotlin:kotlin-reflect"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa:2.4.5"
+    implementation "org.springframework.boot:spring-boot-starter-web:2.4.5"
+
+    implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.4.31.Final'
+    implementation group: 'org.hibernate', name: 'hibernate-spatial', version: '5.4.31.Final'
+
+    implementation "org.postgresql:postgresql:42.2.20"
+    implementation group: 'net.postgis', name: 'postgis-jdbc', version: '2.5.0'
+    implementation group: 'net.postgis', name: 'postgis-geometry', version: '2.5.0'
+
+
+    implementation "org.flywaydb:flyway-core:7.7.3"
 
     implementation "com.drewnoakes:metadata-extractor:2.6.2"
 

@@ -1,12 +1,11 @@
-package photo.dao.user
+package photo.user
 
-import photo.entity.User
 import java.util.*
 
-interface UserDao {
+interface UserService {
     fun createUser(name: String): UUID
     fun renameUser(id: UUID, name: String)
     fun deleteUser(id: UUID)
-    fun getAllUsers(): List<User>
+    fun getAllUsers(): Iterable<User>
     fun getUserById(id: UUID): User?
 }
