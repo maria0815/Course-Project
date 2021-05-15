@@ -83,7 +83,7 @@ class PhotoServiceImpl(
     }
 
     override fun getPhotosByDate(date: LocalDate): Iterable<UUID> =
-        photoRepository.findByPhotoDate(date).map { it.id }
+        photoRepository.findByPhotoDateOrderByPhotoTimeAsc(date).map { it.id }
 
     override fun getAllPhotos(): Iterable<UUID> = photoRepository.findAll().map { it.id }
 

@@ -85,7 +85,8 @@ class PhotoController(private val photoService: PhotoService) {
     }
 
     @ApiOperation(
-        value = "Возвращает список идентификаторов фотографий, сделанных в определенную дату",
+        value = "Возвращает список идентификаторов фотографий, " +
+                "сделанных в определенную дату, отсортированные по времени съемки",
         response = UUID::class,
         responseContainer = "List"
     )
