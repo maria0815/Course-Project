@@ -4,8 +4,8 @@ import java.util.*
 
 interface UserService {
     fun createUser(name: String): UUID
-    fun renameUser(id: UUID, name: String)
+    fun updateUser(id: UUID, name: String)
     fun deleteUser(id: UUID)
     fun getAllUsers(): Iterable<User>
-    fun getUserById(id: UUID): User?
+    fun getUserById(id: UUID): User
 }

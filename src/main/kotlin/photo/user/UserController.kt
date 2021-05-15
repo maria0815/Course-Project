@@ -1,9 +1,6 @@
 package photo.user
 
-import io.swagger.annotations.ApiOperation
-import io.swagger.annotations.ApiParam
-import io.swagger.annotations.ApiResponse
-import io.swagger.annotations.ApiResponses
+import io.swagger.annotations.*
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -11,7 +8,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
-
+@Api(description = "Операции для работы с пользователями")
 @RestController
 @RequestMapping("/users")
 class UserController(private val userService: UserService) {
@@ -21,17 +18,18 @@ class UserController(private val userService: UserService) {
     @ApiOperation("Добавляет нового пользователя")
     @ApiResponses(
         value = [
-            ApiResponse(code = 201, message = "Создан новый пользователь", response = UUID::class),
+            ApiResponse(code = 201, message = "Создан новый пользователь"),
+            ApiResponse(code = 400, message = "Переданный пользователь имеет некорректный формат")
         ]
     )
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     fun createUser(
         @ApiParam("Создаваемый пользователь")
-        @RequestBody request: CreateUserRequest,
-    ): ResponseEntity<UUID?> {
-        val uuid = userService.createUser(request.name)
-        return ResponseEntity(uuid, HttpStatus.CREATED)
+        @RequestBody createUserRequest: CreateUserRequest,
+    ): ResponseEntity<CreateUserResponse> {
+        val uuid = userService.createUser(createUserRequest.name)
+        return ResponseEntity(CreateUserResponse(uuid), HttpStatus.CREATED)
     }
 
     @ApiOperation("Изменяет пользователя")
@@ -42,19 +40,15 @@ class UserController(private val userService: UserService) {
         ]
     )
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    @PutMapping("/{id}")
-    fun renameUser(
+    @PutMapping("/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun updateUser(
         @ApiParam("Идентификатор пользователя")
         @PathVariable id: UUID,
         @ApiParam("Имя пользователя")
-        @RequestBody name: String,
+        @RequestBody updateUserRequest: UpdateUserRequest
     ): ResponseEntity<Unit> {
-        return if (userService.getUserById(id) != null) {
-            userService.renameUser(id, name)
-            ResponseEntity(HttpStatus.NO_CONTENT)
-        } else {
-            ResponseEntity(HttpStatus.NOT_FOUND)
-        }
+        userService.updateUser(id, updateUserRequest.name)
+        return ResponseEntity(HttpStatus.NO_CONTENT)
     }
 
     @ApiOperation("Удаляет пользователя")
@@ -71,15 +65,14 @@ class UserController(private val userService: UserService) {
         @PathVariable id: UUID,
     ): ResponseEntity<Unit> {
         userService.deleteUser(id)
-        return if (userService.getUserById(id) != null) {
-            userService.deleteUser(id)
-            ResponseEntity(HttpStatus.NO_CONTENT)
-        } else {
-            ResponseEntity(HttpStatus.NOT_FOUND)
-        }
+        return ResponseEntity(HttpStatus.NO_CONTENT)
     }
 
-    @ApiOperation("Возвращает список всех пользователей")
+    @ApiOperation(
+        value = "Возвращает список всех пользователей",
+        response = User::class,
+        responseContainer = "List"
+    )
     @ApiResponses(
         value = [
             ApiResponse(code = 200, message = "Список с пользователями доступен")
@@ -102,12 +95,8 @@ class UserController(private val userService: UserService) {
     fun getUserById(
         @ApiParam("Идентификатор пользователя")
         @PathVariable id: UUID,
-    ): ResponseEntity<User?> {
+    ): ResponseEntity<User> {
         val user = userService.getUserById(id)
-        return if (user != null) {
-            ResponseEntity(user, HttpStatus.OK)
-        } else {
-            ResponseEntity(HttpStatus.NOT_FOUND)
-        }
+        return ResponseEntity(user, HttpStatus.OK)
     }
 }

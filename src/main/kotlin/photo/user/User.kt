@@ -1,9 +1,11 @@
 package photo.user
 
+import io.swagger.annotations.ApiModel
 import io.swagger.annotations.ApiModelProperty
 import java.util.*
 import javax.persistence.*
 
+@ApiModel("Пользователь")
 @Entity
 @Table(name = "users", schema = "public")
 class User(

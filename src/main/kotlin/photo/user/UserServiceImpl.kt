@@ -1,6 +1,5 @@
 package photo.user
 
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -11,22 +10,24 @@ class UserServiceImpl(private val userRepository: UserRepository) : UserService 
         return user.id
     }
 
-    override fun renameUser(id: UUID, name: String) {
-        val user = userRepository.findByIdOrNull(id)
-        if (user != null) {
-            userRepository.save(User(user.id, name))
-        }
+    override fun updateUser(id: UUID, name: String) {
+        val user = userRepository.findById(id)
+            .orElseThrow { UserNotFoundException(id) }
+        userRepository.save(User(user.id, name))
     }
 
     override fun deleteUser(id: UUID) {
-        userRepository.deleteById(id)
+        val user = userRepository.findById(id)
+            .orElseThrow { UserNotFoundException(id) }
+        userRepository.delete(user)
     }
 
     override fun getAllUsers(): Iterable<User> {
         return userRepository.findAll()
     }
 
-    override fun getUserById(id: UUID): User? {
-        return userRepository.findByIdOrNull(id)
+    override fun getUserById(id: UUID): User {
+        return userRepository.findById(id)
+            .orElseThrow { UserNotFoundException(id) }
     }
 }
