@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import photo.album.AlbumNotFoundException
 import photo.album.withPhoto.AlbumWithPhotoConflictException
+import photo.photo.EmptyFilenameException
 import photo.photo.PhotoNotFoundException
+import photo.photo.EmptyContentTypeException
 import photo.user.UserNotFoundException
 import java.lang.Exception
 
@@ -30,6 +32,14 @@ class DefaultAdvice {
     )
     fun handleConflictException(e: Exception): ResponseEntity<ErrorResponse> {
         return ResponseEntity(ErrorResponse(e.message), HttpStatus.CONFLICT)
+    }
+
+    @ExceptionHandler(
+        value = [(EmptyFilenameException::class),
+            (EmptyContentTypeException::class)]
+    )
+    fun handleEmptyArgumentException(e: Exception): ResponseEntity<ErrorResponse> {
+        return ResponseEntity(ErrorResponse(e.message), HttpStatus.BAD_REQUEST)
     }
 }
 

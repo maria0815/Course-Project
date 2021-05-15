@@ -51,14 +51,3 @@ data class AlbumDto(
 ) {
     constructor(album: Album) : this(album.id, album.name, album.creationDate, album.creationTime, album.description)
 }
-
-
-//@ApiModel("Альбом с фотографиями")
-//data class AlbumWithPhotoDto(
-//    @ApiModelProperty("Идентификатор записи")
-//    val id: UUID,
-//    @ApiModelProperty("Идентификатор альбома")
-//    val albumId: UUID,
-//    @ApiModelProperty("Идентификатор фотографии")
-//    val photoId: UUID
-//)

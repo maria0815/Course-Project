@@ -47,7 +47,6 @@ class PhotoServiceImpl(
 
     override fun uploadPhoto(file: MultipartFile, userId: UUID): UUID {
         val user = userRepository.findById(userId).orElseThrow { UserNotFoundException(userId) }
-        if (file.originalFilename == null) throw IllegalArgumentException("Имя файла не может быть пустым")
 
         var photoDate: LocalDate? = null
         var photoTime: LocalTime? = null

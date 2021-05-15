@@ -2,12 +2,12 @@ package photo.photo
 
 import io.swagger.annotations.*
 import org.slf4j.LoggerFactory
-import org.springframework.core.io.FileSystemResource
 import org.springframework.core.io.Resource
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
+import photo.handler.ErrorResponse
 import java.time.LocalDate
 import java.util.*
 
@@ -22,7 +22,8 @@ class PhotoController(private val photoService: PhotoService) {
     @ApiOperation("Загружает фотографию")
     @ApiResponses(
         value = [
-            ApiResponse(code = 201, message = "Загружена новая фотография")
+            ApiResponse(code = 201, message = "Загружена новая фотография"),
+            ApiResponse(code = 400, message = "Фотография не загружена", response = ErrorResponse::class)
         ]
     )
     @ResponseStatus(value = HttpStatus.CREATED)
@@ -33,9 +34,8 @@ class PhotoController(private val photoService: PhotoService) {
         @ApiParam("Файл с фотографией")
         @RequestPart(value = "file", required = true) file: MultipartFile
     ): ResponseEntity<UploadPhotoResponse> {
-        if (file.originalFilename == null || file.contentType != "image/jpeg") {
-            return ResponseEntity(HttpStatus.BAD_REQUEST)
-        }
+        if (file.originalFilename == null) throw  EmptyFilenameException()
+        if (file.contentType != "image/jpeg") throw  EmptyContentTypeException()
         val uuid = photoService.uploadPhoto(file, userId)
         return ResponseEntity(UploadPhotoResponse(uuid), HttpStatus.CREATED)
     }
@@ -44,10 +44,10 @@ class PhotoController(private val photoService: PhotoService) {
     @ApiResponses(
         value = [
             ApiResponse(code = 200, message = "Метаданные фотографии найдены", response = PhotoMetadata::class),
-            ApiResponse(code = 404, message = "Фотография не найдена")
+            ApiResponse(code = 404, message = "Фотография не найдена", response = ErrorResponse::class)
         ]
     )
-    @GetMapping("/{id}")
+    @GetMapping("/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getPhotoMetadataById(
         @ApiParam("Идентификатор фотографии")
         @PathVariable id: UUID,
@@ -60,10 +60,10 @@ class PhotoController(private val photoService: PhotoService) {
     @ApiResponses(
         value = [
             ApiResponse(code = 200, message = "Файл фотографии найден"),
-            ApiResponse(code = 404, message = "Фотография не найдена")
+            ApiResponse(code = 404, message = "Фотография не найдена", response = ErrorResponse::class)
         ]
     )
-    @GetMapping("/{id}/file")
+    @GetMapping("/{id}/file", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getPhotoFileById(
         @ApiParam("Идентификатор фотографии")
         @PathVariable id: UUID,
@@ -77,7 +77,7 @@ class PhotoController(private val photoService: PhotoService) {
             contentType = mediaType
             contentDisposition = ContentDisposition
                 .inline()
-                .filename(resource.filename ?: "photo")
+                .filename(resource.filename ?: "data")
                 .build()
         }
 
