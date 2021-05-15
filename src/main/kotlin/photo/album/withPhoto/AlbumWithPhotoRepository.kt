@@ -7,4 +7,5 @@ import java.util.*
 @Repository
 interface AlbumWithPhotoRepository : CrudRepository<AlbumWithPhoto, UUID> {
     fun findByAlbumId(albumId: UUID): Iterable<AlbumWithPhoto>
+    fun existsByAlbumIdAndPhotoId(albumId: UUID, photoId: UUID): Boolean
 }

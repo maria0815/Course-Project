@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import photo.album.AlbumNotFoundException
+import photo.album.withPhoto.AlbumWithPhotoConflictException
 import photo.photo.PhotoNotFoundException
 import photo.user.UserNotFoundException
 import java.lang.Exception
@@ -20,13 +21,20 @@ class DefaultAdvice {
             (UserNotFoundException::class),
             (PhotoNotFoundException::class)]
     )
-    fun handleException(e: Exception): ResponseEntity<NotFoundResponse> {
-        return ResponseEntity(NotFoundResponse(e.message), HttpStatus.NOT_FOUND)
+    fun handleNotFoundException(e: Exception): ResponseEntity<ErrorResponse> {
+        return ResponseEntity(ErrorResponse(e.message), HttpStatus.NOT_FOUND)
+    }
+
+    @ExceptionHandler(
+        value = [(AlbumWithPhotoConflictException::class)]
+    )
+    fun handleConflictException(e: Exception): ResponseEntity<ErrorResponse> {
+        return ResponseEntity(ErrorResponse(e.message), HttpStatus.CONFLICT)
     }
 }
 
 @ApiModel("Ошибка")
-class NotFoundResponse(
+class ErrorResponse(
     @ApiModelProperty("Информация об ошибке")
     val message: String?
 )

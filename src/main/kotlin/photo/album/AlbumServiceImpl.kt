@@ -38,7 +38,7 @@ class AlbumServiceImpl(
                 name,
                 album.creationDate,
                 album.creationTime,
-                album.description,
+                description,
                 album.user
             )
         )
@@ -49,7 +49,7 @@ class AlbumServiceImpl(
         albumRepository.delete(album)
     }
 
-    override fun getAllAlbums(): Iterable<Album> {
-        return albumRepository.findAll()
+    override fun getAllAlbums(): Iterable<AlbumDto> {
+        return albumRepository.findAll().map { AlbumDto(it) }
     }
 }

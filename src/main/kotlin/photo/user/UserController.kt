@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import photo.handler.NotFoundResponse
+import photo.handler.ErrorResponse
 import java.util.*
 
 @Api(description = "Операции для работы с пользователями")
@@ -40,7 +40,7 @@ class UserController(private val userService: UserService) {
             ApiResponse(
                 code = 404,
                 message = "Пользователь с таким идентификатором не найден",
-                response = NotFoundResponse::class
+                response = ErrorResponse::class
             )
         ]
     )
@@ -63,12 +63,12 @@ class UserController(private val userService: UserService) {
             ApiResponse(
                 code = 404,
                 message = "Пользователь с таким идентификатором не найден",
-                response = NotFoundResponse::class
+                response = ErrorResponse::class
             )
         ]
     )
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun deleteUser(
         @ApiParam("Идентификатор пользователя")
         @PathVariable id: UUID,
@@ -100,7 +100,7 @@ class UserController(private val userService: UserService) {
             ApiResponse(
                 code = 404,
                 message = "Пользователь с таким идентификатором не найден",
-                response = NotFoundResponse::class
+                response = ErrorResponse::class
             )
         ]
     )

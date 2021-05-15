@@ -25,5 +25,5 @@ interface AlbumService {
     /**
      * Возвращает список всех альбомов
      */
-    fun getAllAlbums(): Iterable<Album>
+    fun getAllAlbums(): Iterable<AlbumDto>
 }

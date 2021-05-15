@@ -17,11 +17,11 @@ class AlbumWithPhoto(
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: UUID = UUID.fromString("00000000-0000-0000-0000-000000000000"),
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "album_id", referencedColumnName = "id")
     val album: Album,
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "photo_id", referencedColumnName = "id")
     val photo: Photo
 )

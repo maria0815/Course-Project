@@ -6,8 +6,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import photo.album.withPhoto.AlbumWithPhoto
 import photo.album.withPhoto.AlbumWithPhotoService
+import photo.handler.ErrorResponse
 import java.util.*
 
 @Api(description = "Операции для работы с альбомами")
@@ -39,7 +39,7 @@ class AlbumController(
 
     @ApiOperation(
         value = "Возвращает список всех альбомов",
-        response = Album::class,
+        response = AlbumDto::class,
         responseContainer = "List"
     )
     @ApiResponses(
@@ -48,7 +48,7 @@ class AlbumController(
         ]
     )
     @GetMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun getAlbums(): ResponseEntity<Iterable<Album>> {
+    fun getAlbums(): ResponseEntity<Iterable<AlbumDto>> {
         val listOfAlbums = albumService.getAllAlbums()
         return ResponseEntity.ok(listOfAlbums)
     }
@@ -57,11 +57,15 @@ class AlbumController(
     @ApiResponses(
         value = [
             ApiResponse(code = 204, message = "Альбом изменен"),
-            ApiResponse(code = 404, message = "Альбом с таким идентификатором не найден")
+            ApiResponse(
+                code = 404,
+                message = "Альбом с таким идентификатором не найден",
+                response = ErrorResponse::class
+            )
         ]
     )
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    @PutMapping("/{id}")
+    @PutMapping("/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun updateAlbums(
         @ApiParam("Идентификатор альбома")
         @PathVariable id: UUID,
@@ -76,11 +80,15 @@ class AlbumController(
     @ApiResponses(
         value = [
             ApiResponse(code = 204, message = "Альбом удален"),
-            ApiResponse(code = 404, message = "Альбом с таким идентификатором не найден")
+            ApiResponse(
+                code = 404,
+                message = "Альбом с таким идентификатором не найден",
+                response = ErrorResponse::class
+            )
         ]
     )
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun deleteAlbum(
         @ApiParam("Идентификатор альбома")
         @PathVariable id: UUID,
@@ -92,37 +100,53 @@ class AlbumController(
     @ApiOperation("Добавляет фотографию в альбом")
     @ApiResponses(
         value = [
-            ApiResponse(code = 201, message = "Фотография добавлена")
+            ApiResponse(
+                code = 201,
+                message = "Фотография добавлена"
+            ),
+            ApiResponse(
+                code = 409,
+                message = "Фото уже есть в альбоме",
+                response = ErrorResponse::class
+            ),
+            ApiResponse(
+                code = 404,
+                message = "Фотография или альбом не найден",
+                response = ErrorResponse::class
+            )
         ]
     )
     @ResponseStatus(value = HttpStatus.CREATED)
-    @PostMapping("/{albumId}/addPhoto")
+    @PostMapping("/{albumId}/addPhoto", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun addPhoto(
         @ApiParam("Идентификатор альбома")
         @PathVariable albumId: UUID,
         @ApiParam("Идентификатор фотографии")
-        @RequestParam addPhotoRequest: AddPhotoRequest,
+        @RequestBody request: AddPhotoRequest,
     ): ResponseEntity<Unit> {
-        albumWithPhotoService.addPhoto(albumId, addPhotoRequest.photoId)
+        albumWithPhotoService.addPhoto(albumId, request.photoId)
         return ResponseEntity(HttpStatus.CREATED)
     }
 
     @ApiOperation(
         value = "Возвращает список фотографий по идентификатору альбома",
-        response = AlbumWithPhoto::class,
+        response = UUID::class,
         responseContainer = "List"
     )
     @ApiResponses(
         value = [
             ApiResponse(
                 code = 200,
-                message = "Список фотографий по идентификатору альбома найден",
-                response = AlbumWithPhoto::class
+                message = "Список фотографий по идентификатору альбома найден"
             ),
-            ApiResponse(code = 404, message = "Фотографии с таким идентификатором альбома не найдены")
+            ApiResponse(
+                code = 404,
+                message = "Фотографии с таким идентификатором альбома не найдены",
+                response = ErrorResponse::class
+            )
         ]
     )
-    @GetMapping(value = ["{id}"], produces = [MediaType.APPLICATION_JSON_VALUE])
+    @GetMapping(value = ["{id}/photos"], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getPhotosByAlbumId(
         @ApiParam("Идентификатор альбома")
         @PathVariable id: UUID,
