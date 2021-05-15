@@ -1,11 +1,17 @@
 package photo.album.withPhoto
 
+import io.swagger.annotations.ApiModel
 import io.swagger.annotations.ApiModelProperty
 import java.util.*
 import javax.persistence.*
 
+@ApiModel("Альбом с фотографиями")
 @Entity
-@Table(name = "album_with_photos", schema = "public")
+@Table(
+    name = "album_with_photos",
+    schema = "public",
+    uniqueConstraints = [UniqueConstraint(columnNames = ["album_id", "photo_id"])]
+)
 class AlbumWithPhoto(
     @ApiModelProperty(value = "Идентификатор записи")
     @Id

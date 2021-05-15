@@ -7,5 +7,5 @@ import java.util.*
 interface AlbumWithPhotoService {
     fun addPhoto(albumId: UUID, photoId: UUID)
 
-    fun getPhotosByAlbumId(albumId: UUID): List<UUID>
+    fun getPhotosByAlbumId(albumId: UUID): Iterable<UUID>
 }

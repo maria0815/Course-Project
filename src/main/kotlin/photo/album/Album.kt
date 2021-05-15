@@ -1,11 +1,13 @@
 package photo.album
 
+import io.swagger.annotations.ApiModel
 import io.swagger.annotations.ApiModelProperty
 import java.time.LocalDate
 import java.time.LocalTime
 import java.util.*
 import javax.persistence.*
 
+@ApiModel("Альбом")
 @Entity
 @Table(name = "album", schema = "public")
 class Album(
@@ -21,14 +23,14 @@ class Album(
 
     @ApiModelProperty(value = "Дата создания альбома")
     @Column(name = "creation_date", nullable = false)
-    val creationDate: LocalDate?,
+    val creationDate: LocalDate,
 
     @ApiModelProperty(value = "Время создания альбома")
     @Column(name = "creation_time", nullable = false)
-    val creationTime: LocalTime?,
+    val creationTime: LocalTime,
 
     @ApiModelProperty(value = "Описание")
-    @Column(name = "description")
+    @Column(name = "description", nullable = true)
     val description: String?,
 
     @ApiModelProperty(value = "Пользователь, создавший альбом")

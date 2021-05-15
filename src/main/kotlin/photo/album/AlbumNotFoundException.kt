@@ -1,3 +1,5 @@
 package photo.album
 
-class AlbumNotFoundException(message: String) : Exception(message)
+import java.util.*
+
+class AlbumNotFoundException(id: UUID) : Exception(("Альбом с идентификатором $id не найден"))

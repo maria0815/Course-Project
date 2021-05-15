@@ -5,5 +5,4 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface AlbumRepository : CrudRepository<Album, UUID> {
-}
+interface AlbumRepository : CrudRepository<Album, UUID>

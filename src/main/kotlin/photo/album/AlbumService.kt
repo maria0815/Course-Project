@@ -1,24 +1,21 @@
 package photo.album
 
-import org.springframework.stereotype.Repository
-import photo.user.User
 import java.util.UUID
 
 /**
  * Сервис для работы с альбомами фотографий
  */
-@Repository
 interface AlbumService {
     /**
-     * Создает новый альбом с наименованием [name], +
+     * Создает новый альбом с наименованием [name] и описанием  [description],
      * возвращает идентификатор созданного альбома
      */
-    fun createAlbum(name: String, userId: UUID): UUID
+    fun createAlbum(name: String, description: String?, userId: UUID): UUID
 
     /**
-     * Изменяет имя альбома с идентификатором [id] на имя [name]
+     * Изменяет имя альбома с идентификатором [id] на имя [name] и на описание [description]
      */
-    fun renameAlbum(id: UUID, name: String)
+    fun updateAlbum(id: UUID, name: String, description: String?)
 
     /**
      * Удаляет альбом с идентификатором [id]
@@ -26,7 +23,7 @@ interface AlbumService {
     fun deleteAlbum(id: UUID)
 
     /**
-     * Возвращает список всех альбомов +
+     * Возвращает список всех альбомов
      */
     fun getAllAlbums(): Iterable<Album>
 }
