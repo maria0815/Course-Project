@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import photo.handler.NotFoundResponse
 import java.util.*
 
 @Api(description = "Операции для работы с пользователями")
@@ -36,7 +37,11 @@ class UserController(private val userService: UserService) {
     @ApiResponses(
         value = [
             ApiResponse(code = 204, message = "Пользователь изменен"),
-            ApiResponse(code = 404, message = "Пользователь с таким идентификатором не найден")
+            ApiResponse(
+                code = 404,
+                message = "Пользователь с таким идентификатором не найден",
+                response = NotFoundResponse::class
+            )
         ]
     )
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
@@ -55,7 +60,11 @@ class UserController(private val userService: UserService) {
     @ApiResponses(
         value = [
             ApiResponse(code = 204, message = "Пользователь удален"),
-            ApiResponse(code = 404, message = "Пользователь с таким идентификатором не найден")
+            ApiResponse(
+                code = 404,
+                message = "Пользователь с таким идентификатором не найден",
+                response = NotFoundResponse::class
+            )
         ]
     )
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
@@ -70,7 +79,7 @@ class UserController(private val userService: UserService) {
 
     @ApiOperation(
         value = "Возвращает список всех пользователей",
-        response = User::class,
+        response = UserDto::class,
         responseContainer = "List"
     )
     @ApiResponses(
@@ -79,7 +88,7 @@ class UserController(private val userService: UserService) {
         ]
     )
     @GetMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun getUsers(): ResponseEntity<Iterable<User>> {
+    fun getUsers(): ResponseEntity<Iterable<UserDto>> {
         val listOfUsers = userService.getAllUsers()
         return ResponseEntity.ok(listOfUsers)
     }
@@ -87,15 +96,19 @@ class UserController(private val userService: UserService) {
     @ApiOperation("Возвращает пользователя по идентификатору")
     @ApiResponses(
         value = [
-            ApiResponse(code = 200, message = "Пользователь найден", response = User::class),
-            ApiResponse(code = 404, message = "Пользователь с таким идентификатором не найден")
+            ApiResponse(code = 200, message = "Пользователь найден", response = UserDto::class),
+            ApiResponse(
+                code = 404,
+                message = "Пользователь с таким идентификатором не найден",
+                response = NotFoundResponse::class
+            )
         ]
     )
     @GetMapping(value = ["{id}"], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getUserById(
         @ApiParam("Идентификатор пользователя")
         @PathVariable id: UUID,
-    ): ResponseEntity<User> {
+    ): ResponseEntity<UserDto> {
         val user = userService.getUserById(id)
         return ResponseEntity(user, HttpStatus.OK)
     }

@@ -13,6 +13,7 @@ class UserServiceImpl(private val userRepository: UserRepository) : UserService 
     override fun updateUser(id: UUID, name: String) {
         val user = userRepository.findById(id)
             .orElseThrow { UserNotFoundException(id) }
+
         userRepository.save(User(user.id, name))
     }
 
@@ -22,12 +23,13 @@ class UserServiceImpl(private val userRepository: UserRepository) : UserService 
         userRepository.delete(user)
     }
 
-    override fun getAllUsers(): Iterable<User> {
-        return userRepository.findAll()
+    override fun getAllUsers(): Iterable<UserDto> {
+        return userRepository.findAll().map { UserDto(it) }
     }
 
-    override fun getUserById(id: UUID): User {
-        return userRepository.findById(id)
+    override fun getUserById(id: UUID): UserDto {
+        val user = userRepository.findById(id)
             .orElseThrow { UserNotFoundException(id) }
+        return UserDto(user)
     }
 }

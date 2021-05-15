@@ -1,5 +1,7 @@
 package photo.handler
 
+import io.swagger.annotations.ApiModel
+import io.swagger.annotations.ApiModelProperty
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -18,9 +20,13 @@ class DefaultAdvice {
             (UserNotFoundException::class),
             (PhotoNotFoundException::class)]
     )
-    fun handleException(e: Exception): ResponseEntity<Response> {
-        return ResponseEntity(Response(e.message), HttpStatus.NOT_FOUND)
+    fun handleException(e: Exception): ResponseEntity<NotFoundResponse> {
+        return ResponseEntity(NotFoundResponse(e.message), HttpStatus.NOT_FOUND)
     }
-
-    class Response(val message: String?)
 }
+
+@ApiModel("Ошибка")
+class NotFoundResponse(
+    @ApiModelProperty("Информация об ошибке")
+    val message: String?
+)

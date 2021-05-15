@@ -24,7 +24,7 @@ CREATE TABLE MODEL
     id       UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name     VARCHAR(50) NOT NULL,
     manufacturer_id UUID        NOT NULL,
-    FOREIGN KEY (manufacturer_id) REFERENCES MANUFACTURER (id),
+    FOREIGN KEY (manufacturer_id) REFERENCES MANUFACTURER (id) ON DELETE CASCADE ON UPDATE CASCADE,
     UNIQUE (name, manufacturer_id)
 );
 
@@ -46,9 +46,9 @@ CREATE TABLE PHOTO
     model_id    UUID,
     file        BYTEA       NOT NULL,
     geo_data_id  UUID,
-    FOREIGN KEY (user_id) REFERENCES "users" (id),
-    FOREIGN KEY (model_id) REFERENCES MODEL (id),
-    FOREIGN KEY (geo_data_id) REFERENCES GEO_DATA (id)
+    FOREIGN KEY (user_id) REFERENCES "users" (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (model_id) REFERENCES MODEL (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (geo_data_id) REFERENCES GEO_DATA (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE ALBUM
@@ -59,7 +59,7 @@ CREATE TABLE ALBUM
     creation_time TIME        NOT NULL,
     description   VARCHAR(50),
     user_id       UUID        NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES "users" (id)
+    FOREIGN KEY (user_id) REFERENCES "users" (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE ALBUM_WITH_PHOTOS
@@ -67,7 +67,7 @@ CREATE TABLE ALBUM_WITH_PHOTOS
     id       UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     album_id UUID NOT NULL,
     photo_id UUID NOT NULL,
-    FOREIGN KEY (album_id) REFERENCES album (id),
-    FOREIGN KEY (photo_id) REFERENCES photo (id),
+    FOREIGN KEY (album_id) REFERENCES album (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (photo_id) REFERENCES photo (id) ON DELETE CASCADE ON UPDATE CASCADE,
     UNIQUE (album_id, photo_id)
 );
