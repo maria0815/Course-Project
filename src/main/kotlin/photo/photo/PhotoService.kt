@@ -1,5 +1,6 @@
 package photo.photo
 
+import org.springframework.core.io.Resource
 import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDate
 import java.util.UUID
@@ -16,7 +17,7 @@ interface PhotoService {
     /**
      * Возвращает файл фотографии по идентификатору [photoId]
      */
-    fun getPhotoFileById(photoId: UUID): ByteArray
+    fun getPhotoFileById(photoId: UUID): Resource
 
     /**
      * Загружает фотографию [photo], возвращает идентификатор сохраненной

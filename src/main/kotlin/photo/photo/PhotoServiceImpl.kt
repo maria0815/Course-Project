@@ -6,6 +6,7 @@ import com.drew.metadata.exif.ExifIFD0Directory
 import com.drew.metadata.exif.GpsDirectory
 import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.GeometryFactory
+import org.springframework.core.io.Resource
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import photo.manufacturer.Manufacturer
@@ -16,6 +17,7 @@ import photo.model.Model
 import photo.model.ModelRepository
 import photo.user.UserNotFoundException
 import photo.user.UserRepository
+import photo.utils.FileNameAwareByteArrayResource
 import java.io.BufferedInputStream
 import java.time.Instant
 import java.time.LocalDate
@@ -38,13 +40,14 @@ class PhotoServiceImpl(
         return PhotoMetadata(photo)
     }
 
-    override fun getPhotoFileById(photoId: UUID): ByteArray {
+    override fun getPhotoFileById(photoId: UUID): Resource {
         val photo = photoRepository.findById(photoId).orElseThrow { throw PhotoNotFoundException(photoId) }
-        return photo.file
+        return FileNameAwareByteArrayResource(photo.file, photo.fileName)
     }
 
     override fun uploadPhoto(file: MultipartFile, userId: UUID): UUID {
         val user = userRepository.findById(userId).orElseThrow { UserNotFoundException(userId) }
+        if (file.originalFilename == null) throw IllegalArgumentException("Имя файла не может быть пустым")
 
         var photoDate: LocalDate? = null
         var photoTime: LocalTime? = null
@@ -67,7 +70,7 @@ class PhotoServiceImpl(
         val photo = photoRepository.save(
             Photo(
                 user = user,
-                fileName = file.name,
+                fileName = file.originalFilename,
                 uploadDate = LocalDate.now(),
                 uploadTime = LocalTime.now(),
                 photoDate = photoDate,

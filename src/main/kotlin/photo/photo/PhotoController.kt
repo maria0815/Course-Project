@@ -2,14 +2,15 @@ package photo.photo
 
 import io.swagger.annotations.*
 import org.slf4j.LoggerFactory
+import org.springframework.core.io.FileSystemResource
+import org.springframework.core.io.Resource
 import org.springframework.format.annotation.DateTimeFormat
-import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
+import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDate
 import java.util.*
+
 
 @Api(description = "Операции для работы с фотографиями")
 @RestController
@@ -32,6 +33,9 @@ class PhotoController(private val photoService: PhotoService) {
         @ApiParam("Файл с фотографией")
         @RequestPart(value = "file", required = true) file: MultipartFile
     ): ResponseEntity<UploadPhotoResponse> {
+        if (file.originalFilename == null || file.contentType != "image/jpeg") {
+            return ResponseEntity(HttpStatus.BAD_REQUEST)
+        }
         val uuid = photoService.uploadPhoto(file, userId)
         return ResponseEntity(UploadPhotoResponse(uuid), HttpStatus.CREATED)
     }
@@ -63,8 +67,21 @@ class PhotoController(private val photoService: PhotoService) {
     fun getPhotoFileById(
         @ApiParam("Идентификатор фотографии")
         @PathVariable id: UUID,
-    ): ByteArray {
-        return photoService.getPhotoFileById(id)
+    ): ResponseEntity<Resource> {
+        val resource = photoService.getPhotoFileById(id)
+
+        val mediaType: MediaType = MediaTypeFactory.getMediaType(resource)
+            .orElse(MediaType.APPLICATION_OCTET_STREAM)
+
+        val headers = HttpHeaders().apply {
+            contentType = mediaType
+            contentDisposition = ContentDisposition
+                .inline()
+                .filename(resource.filename ?: "photo")
+                .build()
+        }
+
+        return ResponseEntity(resource, headers, HttpStatus.OK)
     }
 
     @ApiOperation(
