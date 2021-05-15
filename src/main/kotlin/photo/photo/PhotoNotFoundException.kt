@@ -1,3 +1,5 @@
 package photo.photo
 
-class PhotoNotFoundException(message: String) : Exception(message)
+import java.util.*
+
+class PhotoNotFoundException(id: UUID) : Exception(("Фотография с идентификатором $id не найдена"))

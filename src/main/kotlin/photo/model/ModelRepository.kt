@@ -6,5 +6,5 @@ import java.util.*
 
 @Repository
 interface ModelRepository : CrudRepository<Model, UUID> {
-    fun findByNameAndBrandId(name: String?, brandId: UUID): Model?
+    fun findByNameAndManufacturerId(name: String, manufacturerId: UUID): Model?
 }

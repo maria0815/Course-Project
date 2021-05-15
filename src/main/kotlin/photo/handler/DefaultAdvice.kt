@@ -12,7 +12,12 @@ import java.lang.Exception
 @ControllerAdvice
 class DefaultAdvice {
 
-    @ExceptionHandler(value = [(AlbumNotFoundException::class), (UserNotFoundException::class), (PhotoNotFoundException::class)])
+    @ExceptionHandler(
+        value = [
+            (AlbumNotFoundException::class),
+            (UserNotFoundException::class),
+            (PhotoNotFoundException::class)]
+    )
     fun handleException(e: Exception): ResponseEntity<Response> {
         return ResponseEntity(Response(e.message), HttpStatus.NOT_FOUND)
     }

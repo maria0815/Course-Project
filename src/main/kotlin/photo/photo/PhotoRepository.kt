@@ -7,5 +7,5 @@ import java.util.*
 
 @Repository
 interface PhotoRepository : CrudRepository<Photo, UUID> {
-    fun findByPhotoDate(photoDate: LocalDate): List<Photo>
+    fun findByPhotoDate(photoDate: LocalDate): Iterable<Photo>
 }
