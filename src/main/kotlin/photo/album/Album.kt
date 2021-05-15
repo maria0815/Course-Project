@@ -2,6 +2,8 @@ package photo.album
 
 import io.swagger.annotations.ApiModel
 import io.swagger.annotations.ApiModelProperty
+import photo.album.withPhoto.AlbumWithPhoto
+import photo.user.User
 import java.time.LocalDate
 import java.time.LocalTime
 import java.util.*
@@ -33,7 +35,10 @@ class Album(
     @Column(name = "description", nullable = true)
     val description: String?,
 
-    @ApiModelProperty(value = "Пользователь, создавший альбом")
-    @Column(name = "user_id", nullable = false)
-    val userId: UUID
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    val user: User,
+
+    @OneToMany(mappedBy = "album")
+    val albumsWithPhoto: List<AlbumWithPhoto> = mutableListOf()
 )

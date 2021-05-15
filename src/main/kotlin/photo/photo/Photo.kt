@@ -2,6 +2,10 @@ package photo.photo
 
 import io.swagger.annotations.ApiModel
 import io.swagger.annotations.ApiModelProperty
+import photo.album.withPhoto.AlbumWithPhoto
+import photo.geoData.GeoData
+import photo.model.Model
+import photo.user.User
 import java.time.LocalDate
 import java.time.LocalTime
 import java.util.*
@@ -16,10 +20,6 @@ class Photo(
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: UUID = UUID.fromString("00000000-0000-0000-0000-000000000000"),
-
-    @ApiModelProperty(value = "Идентификатор пользователя")
-    @Column(name = "user_id", nullable = false)
-    var userId: UUID,
 
     @ApiModelProperty(value = "Имя файла")
     @Column(name = "file_name", nullable = false)
@@ -37,18 +37,24 @@ class Photo(
     @Column(name = "photo_date", nullable = true)
     var photoDate: LocalDate?,
 
-    @ApiModelProperty(value = "Время создания фотографии")
     @Column(name = "photo_time", nullable = true)
-    var photoTime: LocalTime?,
-
-    @ApiModelProperty(value = "Идентификатор модели фотоаппарата")
-    @Column(name = "model_id", nullable = true)
-    var modelId: UUID?,
+    val photoTime: LocalTime?,
 
     @Column(name = "file", nullable = false)
-    var file: ByteArray,
+    val file: ByteArray,
 
-    @ApiModelProperty(value = "Идентификатор геоданных")
-    @Column(name = "geo_data_id", nullable = true)
-    var geoDataId: UUID?
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    val user: User,
+
+    @OneToOne(optional = true)
+    @JoinColumn(name = "geo_data_id", referencedColumnName = "id")
+    val geoData: GeoData? = null,
+
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "model_id", referencedColumnName = "id")
+    val model: Model? = null,
+
+    @OneToMany(mappedBy = "photo")
+    val albumWithPhotos: List<AlbumWithPhoto> = mutableListOf()
 )

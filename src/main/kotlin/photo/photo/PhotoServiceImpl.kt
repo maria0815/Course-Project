@@ -51,8 +51,8 @@ class PhotoServiceImpl(
 
         val inputStream = BufferedInputStream(file.inputStream)
         val metadataReader = ImageMetadataReader.readMetadata(inputStream, false)
-        val geoDataId = saveGeoData(metadataReader)
-        val modelId = saveModelInfo(metadataReader)
+        val geoData = saveGeoData(metadataReader)
+        val model = saveModelInfo(metadataReader)
 
         val containsExifDirectory = metadataReader.containsDirectory(ExifIFD0Directory::class.java)
         if (containsExifDirectory) {
@@ -66,15 +66,15 @@ class PhotoServiceImpl(
 
         val photo = photoRepository.save(
             Photo(
-                userId = user.id,
+                user = user,
                 fileName = file.name,
                 uploadDate = LocalDate.now(),
                 uploadTime = LocalTime.now(),
                 photoDate = photoDate,
                 photoTime = photoTime,
-                modelId = modelId,
+                model = model,
                 file = file.bytes,
-                geoDataId = geoDataId
+                geoData = geoData
             )
         )
         return photo.id
@@ -89,7 +89,7 @@ class PhotoServiceImpl(
         return photoRepository.findPhotoInRadius(latitude, longitude, radius)
     }
 
-    private fun saveGeoData(metadataReader: Metadata): UUID? {
+    private fun saveGeoData(metadataReader: Metadata): GeoData? {
         val containsGpsDirectory = metadataReader.containsDirectory(GpsDirectory::class.java)
         if (!containsGpsDirectory) return null
         val gpsDirectory = metadataReader.getDirectory(GpsDirectory::class.java)
@@ -97,11 +97,10 @@ class PhotoServiceImpl(
         val latitude = location.latitude
         val longitude = location.longitude
         val point = GeometryFactory().createPoint(Coordinate(latitude, longitude))
-        val geoData = geoDataRepository.save(GeoData(place = point))
-        return geoData.id
+        return geoDataRepository.save(GeoData(place = point))
     }
 
-    private fun saveModelInfo(metadataReader: Metadata): UUID? {
+    private fun saveModelInfo(metadataReader: Metadata): Model? {
         val containsExifDirectory = metadataReader.containsDirectory(ExifIFD0Directory::class.java)
         if (containsExifDirectory) {
             val exifDirectory = metadataReader.getDirectory(ExifIFD0Directory::class.java)
@@ -111,11 +110,10 @@ class PhotoServiceImpl(
             val cameraModel = exifDirectory.getString(ExifIFD0Directory.TAG_MODEL)
 
             val manufacturer = manufacturerRepository.findByName(cameraManufacturer)
-            val manufacturerId =
-                manufacturer?.id ?: manufacturerRepository.save(Manufacturer(name = cameraManufacturer)).id
+                ?: manufacturerRepository.save(Manufacturer(name = cameraManufacturer))
 
-            val model = modelRepository.findByNameAndManufacturerId(cameraModel, manufacturerId)
-            return model?.id ?: modelRepository.save(Model(name = cameraModel, manufacturerId = manufacturerId)).id
+            val model = modelRepository.findByNameAndManufacturerId(cameraModel, manufacturer.id)
+            return model ?: modelRepository.save(Model(name = cameraModel, manufacturer = manufacturer))
         }
 
         return null

@@ -27,9 +27,9 @@ data class PhotoMetadata(
         photo.fileName,
         photo.photoDate,
         photo.photoTime,
-        null,
-        null,
-        null,
-        null
+        photo.model?.manufacturer?.name,
+        photo.model?.name,
+        photo.geoData?.place?.x,
+        photo.geoData?.place?.y
     )
 }

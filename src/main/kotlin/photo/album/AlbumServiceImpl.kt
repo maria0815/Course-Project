@@ -14,7 +14,7 @@ class AlbumServiceImpl(
 ) : AlbumService {
 
     override fun createAlbum(name: String, description: String?, userId: UUID): UUID {
-        if (!userRepository.existsById(userId)) throw UserNotFoundException(userId)
+        val user = userRepository.findById(userId).orElseThrow { UserNotFoundException(userId) }
 
         val album = albumRepository.save(
             Album(
@@ -22,7 +22,7 @@ class AlbumServiceImpl(
                 creationDate = LocalDate.now(),
                 creationTime = LocalTime.now(),
                 description = description,
-                userId = userId
+                user = user
             )
         )
         return album.id
@@ -39,7 +39,7 @@ class AlbumServiceImpl(
                 album.creationDate,
                 album.creationTime,
                 album.description,
-                album.userId
+                album.user
             )
         )
     }

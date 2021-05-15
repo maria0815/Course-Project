@@ -1,11 +1,10 @@
 package photo.album.withPhoto
 
-import io.swagger.annotations.ApiModel
-import io.swagger.annotations.ApiModelProperty
+import photo.album.Album
+import photo.photo.Photo
 import java.util.*
 import javax.persistence.*
 
-@ApiModel("Альбом с фотографиями")
 @Entity
 @Table(
     name = "album_with_photos",
@@ -13,17 +12,16 @@ import javax.persistence.*
     uniqueConstraints = [UniqueConstraint(columnNames = ["album_id", "photo_id"])]
 )
 class AlbumWithPhoto(
-    @ApiModelProperty(value = "Идентификатор записи")
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: UUID = UUID.fromString("00000000-0000-0000-0000-000000000000"),
 
-    @ApiModelProperty(value = "Идентификатор альбома")
-    @Column(name = "album_id", nullable = false)
-    val albumId: UUID,
+    @ManyToOne
+    @JoinColumn(name = "album_id", referencedColumnName = "id")
+    val album: Album,
 
-    @ApiModelProperty(value = "Идентификатор фотографии")
-    @Column(name = "photo_id", nullable = false)
-    val photoId: UUID
+    @ManyToOne
+    @JoinColumn(name = "photo_id", referencedColumnName = "id")
+    val photo: Photo
 )

@@ -1,5 +1,6 @@
 package photo.manufacturer
 
+import photo.model.Model
 import java.util.*
 import javax.persistence.*
 
@@ -9,8 +10,11 @@ class Manufacturer(
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
-    var id: UUID = UUID.fromString("00000000-0000-0000-0000-000000000000"),
+    val id: UUID = UUID.fromString("00000000-0000-0000-0000-000000000000"),
 
     @Column(name = "name", nullable = false, unique = true)
-    var name: String
+    val name: String,
+
+    @OneToMany(mappedBy = "manufacturer")
+    val models: List<Model> = mutableListOf(),
 )
