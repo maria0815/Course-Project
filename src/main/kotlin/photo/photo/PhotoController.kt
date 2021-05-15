@@ -2,6 +2,7 @@ package photo.photo
 
 import io.swagger.annotations.*
 import org.slf4j.LoggerFactory
+import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -43,12 +44,27 @@ class PhotoController(private val photoService: PhotoService) {
         ]
     )
     @GetMapping("/{id}")
-    fun getPhotoById(
+    fun getPhotoMetadataById(
         @ApiParam("Идентификатор фотографии")
         @PathVariable id: UUID,
     ): ResponseEntity<PhotoMetadata> {
         val metadata = photoService.getPhotoMetadata(id)
         return ResponseEntity.ok(metadata)
+    }
+
+    @ApiOperation("Возвращает файл фотографии по идентификатору")
+    @ApiResponses(
+        value = [
+            ApiResponse(code = 200, message = "Файл фотографии найден"),
+            ApiResponse(code = 404, message = "Фотография не найдена")
+        ]
+    )
+    @GetMapping("/{id}/file")
+    fun getPhotoFileById(
+        @ApiParam("Идентификатор фотографии")
+        @PathVariable id: UUID,
+    ): ByteArray {
+        return photoService.getPhotoFileById(id)
     }
 
     @ApiOperation(
@@ -64,6 +80,7 @@ class PhotoController(private val photoService: PhotoService) {
     @GetMapping("/getByDate")
     fun getPhotosByDate(
         @ApiParam("Дата, когда была сделана фотография")
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
         @RequestParam date: LocalDate,
     ): ResponseEntity<Iterable<UUID>> {
         val listOfPhotos = photoService.getPhotosByDate(date)

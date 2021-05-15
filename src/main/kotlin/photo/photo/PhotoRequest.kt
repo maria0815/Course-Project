@@ -17,7 +17,7 @@ data class PhotoMetadata(
     var fileName: String,
     var photoDate: LocalDate?,
     var photoTime: LocalTime?,
-    var brand: String?,
+    var manufacturer: String?,
     var model: String?,
     var latitude: Double?,
     var longitude: Double?

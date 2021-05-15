@@ -4,7 +4,8 @@ import com.drew.imaging.ImageMetadataReader
 import com.drew.metadata.Metadata
 import com.drew.metadata.exif.ExifIFD0Directory
 import com.drew.metadata.exif.GpsDirectory
-import org.postgis.Point
+import org.locationtech.jts.geom.Coordinate
+import org.locationtech.jts.geom.GeometryFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import photo.manufacturer.Manufacturer
@@ -85,20 +86,18 @@ class PhotoServiceImpl(
     override fun getAllPhotos(): Iterable<UUID> = photoRepository.findAll().map { it.id }
 
     override fun getPhotosByCoordinates(latitude: Double, longitude: Double, radius: Int): Iterable<UUID> {
-        //return geoDataRepository.findInRadius(latitude, longitude, radius).map { it.photoId }
-        return emptyList()
+        return photoRepository.findPhotoInRadius(latitude, longitude, radius)
     }
 
     private fun saveGeoData(metadataReader: Metadata): UUID? {
-        return null
-
         val containsGpsDirectory = metadataReader.containsDirectory(GpsDirectory::class.java)
         if (!containsGpsDirectory) return null
         val gpsDirectory = metadataReader.getDirectory(GpsDirectory::class.java)
         val location = gpsDirectory.geoLocation
         val latitude = location.latitude
         val longitude = location.longitude
-        val geoData = geoDataRepository.save(GeoData(place = Point(latitude, longitude)))
+        val point = GeometryFactory().createPoint(Coordinate(latitude, longitude))
+        val geoData = geoDataRepository.save(GeoData(place = point))
         return geoData.id
     }
 
