@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS GEO_DATA CASCADE;
 DROP TABLE IF EXISTS ALBUM CASCADE;
 DROP TABLE IF EXISTS ALBUM_WITH_PHOTOS CASCADE;
 DROP TABLE IF EXISTS USERS CASCADE;
-DROP TABLE IF EXISTS BRAND CASCADE;
+DROP TABLE IF EXISTS MANUFACTURER CASCADE;
 DROP TABLE IF EXISTS DEVICE CASCADE;
 DROP TABLE IF EXISTS MODEL CASCADE;
 
@@ -13,39 +13,42 @@ CREATE TABLE USERS
     name VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE BRAND
+CREATE TABLE MANUFACTURER
 (
-    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    name        VARCHAR(50) NOT NULL
+    id   UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(50) NOT NULL UNIQUE
 );
 
 CREATE TABLE MODEL
 (
     id       UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name     VARCHAR(50) NOT NULL,
-    brand_id UUID        NOT NULL,
-    FOREIGN KEY (brand_id) REFERENCES BRAND (id)
+    manufacturer_id UUID        NOT NULL,
+    FOREIGN KEY (manufacturer_id) REFERENCES MANUFACTURER (id),
+    UNIQUE (name, manufacturer_id)
+);
+
+CREATE TABLE GEO_DATA
+(
+    id    UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    place GEOGRAPHY NOT NULL
 );
 
 CREATE TABLE PHOTO
 (
     id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    file_name   VARCHAR(50),
+    file_name   VARCHAR(50) NOT NULL,
+    user_id     UUID        NOT NULL,
     upload_date DATE        NOT NULL,
     upload_time TIME        NOT NULL,
-    photo_date  DATE        NOT NULL,
-    photo_time  TIME        NOT NULL,
-    user_id     UUID        NOT NULL,
-    model_id    UUID        NOT NULL,
-    file BYTEA NOT NULL,
+    photo_date  DATE,
+    photo_time  TIME,
+    model_id    UUID,
+    file        BYTEA       NOT NULL,
+    geo_data_id  UUID,
     FOREIGN KEY (user_id) REFERENCES "users" (id),
-    FOREIGN KEY (model_id) REFERENCES MODEL (id)
-);
-
-CREATE TABLE GEO_DATA
-(
-    id       UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    place    GEOGRAPHY NOT NULL
+    FOREIGN KEY (model_id) REFERENCES MODEL (id),
+    FOREIGN KEY (geo_data_id) REFERENCES GEO_DATA (id)
 );
 
 CREATE TABLE ALBUM
