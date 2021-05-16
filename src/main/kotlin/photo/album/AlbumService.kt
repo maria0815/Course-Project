@@ -7,7 +7,7 @@ import java.util.UUID
  */
 interface AlbumService {
     /**
-     * Создает новый альбом с наименованием [name] и описанием  [description],
+     * Создает новый альбом с наименованием [name], описанием [description] и пользователем, владельцем альбома [userId]
      * возвращает идентификатор созданного альбома
      */
     fun createAlbum(name: String, description: String?, userId: UUID): UUID

@@ -33,7 +33,7 @@ data class PhotoMetadata(
 ) {
     constructor(photo: Photo) : this(
         photo.id,
-        photo.fileName,
+        photo.file.name,
         photo.photoDate,
         photo.photoTime,
         photo.model?.manufacturer?.name,

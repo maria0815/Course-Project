@@ -1,6 +1,7 @@
 package photo.photo
 
 import photo.album.withPhoto.AlbumWithPhoto
+import photo.file.File
 import photo.geoData.GeoData
 import photo.model.Model
 import photo.user.User
@@ -17,9 +18,6 @@ class Photo(
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: UUID = UUID.fromString("00000000-0000-0000-0000-000000000000"),
 
-    @Column(name = "file_name", nullable = false)
-    val fileName: String,
-
     @Column(name = "upload_date", nullable = false)
     val uploadDate: LocalDate,
 
@@ -32,12 +30,13 @@ class Photo(
     @Column(name = "photo_time", nullable = true)
     val photoTime: LocalTime?,
 
-    @Column(name = "file", nullable = false)
-    val file: ByteArray,
-
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     val user: User,
+
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "file_id", referencedColumnName = "id")
+    val file: File,
 
     @OneToOne(optional = true)
     @JoinColumn(name = "geo_data_id", referencedColumnName = "id")

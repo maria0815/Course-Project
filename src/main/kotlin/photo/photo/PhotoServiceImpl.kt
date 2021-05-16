@@ -9,6 +9,8 @@ import org.locationtech.jts.geom.GeometryFactory
 import org.springframework.core.io.Resource
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
+import photo.file.File
+import photo.file.FileRepository
 import photo.manufacturer.Manufacturer
 import photo.manufacturer.ManufacturerRepository
 import photo.geoData.GeoData
@@ -31,7 +33,8 @@ class PhotoServiceImpl(
     private val userRepository: UserRepository,
     private val manufacturerRepository: ManufacturerRepository,
     private val modelRepository: ModelRepository,
-    private val geoDataRepository: GeoDataRepository
+    private val geoDataRepository: GeoDataRepository,
+    private val fileRepository: FileRepository
 ) :
     PhotoService {
 
@@ -42,19 +45,21 @@ class PhotoServiceImpl(
 
     override fun getPhotoFileById(photoId: UUID): Resource {
         val photo = photoRepository.findById(photoId).orElseThrow { throw PhotoNotFoundException(photoId) }
-        return FileNameAwareByteArrayResource(photo.file, photo.fileName)
+        val file = photo.file
+        return FileNameAwareByteArrayResource(file.data, file.name)
     }
 
-    override fun uploadPhoto(file: MultipartFile, userId: UUID): UUID {
+    override fun uploadPhoto(multipartFile: MultipartFile, userId: UUID): UUID {
         val user = userRepository.findById(userId).orElseThrow { UserNotFoundException(userId) }
 
         var photoDate: LocalDate? = null
         var photoTime: LocalTime? = null
 
-        val inputStream = BufferedInputStream(file.inputStream)
+        val inputStream = BufferedInputStream(multipartFile.inputStream)
         val metadataReader = ImageMetadataReader.readMetadata(inputStream, false)
         val geoData = saveGeoData(metadataReader)
         val model = saveModelInfo(metadataReader)
+        val file = saveFileInfo(multipartFile.bytes, multipartFile.originalFilename)
 
         val containsExifDirectory = metadataReader.containsDirectory(ExifIFD0Directory::class.java)
         if (containsExifDirectory) {
@@ -69,13 +74,12 @@ class PhotoServiceImpl(
         val photo = photoRepository.save(
             Photo(
                 user = user,
-                fileName = file.originalFilename,
                 uploadDate = LocalDate.now(),
                 uploadTime = LocalTime.now(),
                 photoDate = photoDate,
                 photoTime = photoTime,
                 model = model,
-                file = file.bytes,
+                file = file,
                 geoData = geoData
             )
         )
@@ -102,6 +106,10 @@ class PhotoServiceImpl(
         return geoDataRepository.save(GeoData(place = point))
     }
 
+    private fun saveFileInfo(data: ByteArray, fileName: String): File {
+        return fileRepository.save(File(data = data, name = fileName))
+    }
+
     private fun saveModelInfo(metadataReader: Metadata): Model? {
         val containsExifDirectory = metadataReader.containsDirectory(ExifIFD0Directory::class.java)
         if (containsExifDirectory) {
@@ -117,7 +125,6 @@ class PhotoServiceImpl(
             val model = modelRepository.findByNameAndManufacturerId(cameraModel, manufacturer.id)
             return model ?: modelRepository.save(Model(name = cameraModel, manufacturer = manufacturer))
         }
-
         return null
     }
 }
