@@ -5,9 +5,9 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: org.postgresql.Driver
-    username: ${JDBC_DATABASE_USERNAME:maria}
-    password: ${JDBC_DATABASE_PASSWORD:123}
-    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5432/photoService}
+    username: maria
+    password: 123
+    url: jdbc:postgresql://localhost:5432/photoService
   jpa:
     properties:
       hibernate:

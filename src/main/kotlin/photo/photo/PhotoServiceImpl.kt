@@ -88,7 +88,7 @@ class PhotoServiceImpl(
     override fun getAllPhotos(): Iterable<UUID> = photoRepository.findAll().map { it.id }
 
     override fun getPhotosByCoordinates(latitude: Double, longitude: Double, radius: Int): Iterable<UUID> {
-        return photoRepository.findPhotoInRadius(latitude, longitude, radius)
+        return photoRepository.findPhotoInRadius(latitude, longitude, radius).map { UUID.fromString(it) }
     }
 
     private fun saveGeoData(metadataReader: Metadata): GeoData? {

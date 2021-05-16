@@ -12,12 +12,12 @@ interface PhotoRepository : CrudRepository<Photo, UUID> {
     fun findByPhotoDateOrderByPhotoTimeAsc(photoDate: LocalDate): Iterable<Photo>
 
     @Query(
-        value = "SELECT photo.id FROM geo_data JOIN photo on geo_data.id = photo.geo_data_id WHERE st_dwithin(place, st_makepoint(:latitude, :longitude)\\:\\:geography, :radius * 1000,  false);",
+        value = "SELECT cast(photo.id as varchar) FROM geo_data JOIN photo on geo_data.id = photo.geo_data_id WHERE st_dwithin(place, st_makepoint(:latitude, :longitude)\\:\\:geography, :radius * 1000,  false);",
         nativeQuery = true
     )
     fun findPhotoInRadius(
         @Param("latitude") latitude: Double,
         @Param("longitude") longitude: Double,
         @Param("radius") radius: Int
-    ): List<UUID>
+    ): List<String>
 }
