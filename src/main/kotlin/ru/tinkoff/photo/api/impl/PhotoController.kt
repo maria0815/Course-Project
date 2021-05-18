@@ -1,4 +1,4 @@
-package ru.tinkoff.photo.api.iml
+package ru.tinkoff.photo.api.impl
 
 import org.slf4j.LoggerFactory
 import org.springframework.core.io.Resource

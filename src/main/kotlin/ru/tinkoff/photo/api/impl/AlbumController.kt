@@ -1,4 +1,4 @@
-package ru.tinkoff.photo.api.iml
+package ru.tinkoff.photo.api.impl
 
 import io.swagger.annotations.*
 import org.slf4j.LoggerFactory

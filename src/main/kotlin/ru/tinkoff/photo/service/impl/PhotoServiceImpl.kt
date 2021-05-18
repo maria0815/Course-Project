@@ -21,10 +21,10 @@ import ru.tinkoff.photo.exception.PhotoNotFoundException
 import ru.tinkoff.photo.database.repository.PhotoRepository
 import ru.tinkoff.photo.exception.UserNotFoundException
 import ru.tinkoff.photo.database.repository.UserRepository
-import photo.utils.FileNameAwareByteArrayResource
 import ru.tinkoff.photo.dto.PhotoMetadata
 import ru.tinkoff.photo.database.entity.Photo
 import ru.tinkoff.photo.service.PhotoService
+import ru.tinkoff.photo.utils.FileNameAwareByteArrayResource
 import java.io.BufferedInputStream
 import java.time.Instant
 import java.time.LocalDate
