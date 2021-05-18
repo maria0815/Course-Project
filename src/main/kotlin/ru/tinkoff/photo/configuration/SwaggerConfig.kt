@@ -15,7 +15,7 @@ class SwaggerConfig {
         return Docket(DocumentationType.OAS_30)
             .useDefaultResponseMessages(false)
             .select()
-            .apis(RequestHandlerSelectors.basePackage("photo"))
+            .apis(RequestHandlerSelectors.basePackage("ru.tinkoff.photo"))
             .paths(PathSelectors.any())
             .build()
     }
